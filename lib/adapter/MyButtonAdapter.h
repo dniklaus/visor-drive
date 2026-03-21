@@ -11,6 +11,7 @@
 #include <stdint.h>
 #include <Button.h>
 
+class Indicator;
 class MyButtonAdapter : public ButtonAdapter
 {
 public:
@@ -18,8 +19,6 @@ public:
   virtual ~MyButtonAdapter();
 
   void notifyStatusChanged(bool isActive);
-
-  const static uint32_t cButtonPin;
 
 private:
   Indicator* m_indicator;

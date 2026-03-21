@@ -38,5 +38,4 @@ void MyButtonAdapter::notifyStatusChanged(bool isActive)
       }
     }
   }
-
 }

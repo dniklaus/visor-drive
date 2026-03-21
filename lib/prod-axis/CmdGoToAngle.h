@@ -6,11 +6,13 @@
 #include <Cmd.h>
 
 class Axis;
+class Indicator;
 
 class CmdGoToAngle : public Cmd
 {
 public:
-    CmdGoToAngle(CmdSequence* cmdSequence, long int timeMillis, Axis* axis, int targetAngle, int velocity);
+    CmdGoToAngle(CmdSequence* cmdSequence, long int timeMillis, Axis* axis, Indicator* targetToggleIndicator, 
+        int targetAngle0, int targetAngle1, int velocity);
     virtual ~CmdGoToAngle();
 
     void execute();
@@ -18,7 +20,9 @@ public:
 
 private:
     Axis* m_axis;
-    int m_targetAngle;
+    Indicator* m_indicator;
+    int m_targetAngle0;
+    int m_targetAngle1;
     int m_velocity;
 };
 

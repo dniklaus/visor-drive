@@ -15,7 +15,8 @@
 #include "MyBuiltinLedIndicatorAdapter.h"
 #include <Button.h>
 #include <ButtonEdgeDetector.h>
-#include <MyButtonAdapter.h>
+#include "MyButtonAdapter.h"
+#include "ServoButtonAdapter.h"
 #include <ArduinoDigitalInPinSupervisor.h>
 #include <ProductDebug.h>
 #include <ECMqttClient.h>   // ERNI Community MQTT client wrapper library (depends on MQTT library)
@@ -30,6 +31,7 @@
 #include <MyServoHal.h>
 #include <DbgCmd_SetAngle.h>
 #include <CmdSequence.h>
+#include "CmdGoToAngle.h"
 #include "TargetReachedNotifier.h"
 #include "App.h"
 
@@ -92,6 +94,13 @@ void App::setup()
   // Servo Power Enable signal
   m_servoPwrEn = IndicatorFactory::createIndicator("srvpwr", "Servo Power Enable.");
   m_servoPwrEn->assignAdapter(new MyServoPwrEnIndicatorAdapter());
+
+
+  // Servo end position indicator and button to toggle it
+  Indicator* srvTglInd = IndicatorFactory::createIndicator("srvtgl", "Servo end position toggle.");
+  srvTglInd->clear();
+  ServoButtonAdapter* srvBtnAdapter = new ServoButtonAdapter(srvTglInd);
+  new Button(new ArduinoDigitalInPinSupervisor(26), new ButtonEdgeDetector(), srvBtnAdapter);
   
   //-----------------------------------------------------------------------------
   // Battery Voltage Surveillance
@@ -137,11 +146,14 @@ void App::setup()
     // new LedTestBlinkPublisher();  // TODO: fix BUG, when this object gets created
   #endif
 
+  CmdSequence* cmdSequence = new CmdSequence();
+  srvBtnAdapter->assignCmdSequence(cmdSequence);
+  
   //------------------------------------------------------------------------------
   // Servo objects creation
   //------------------------------------------------------------------------------
-  const int servoPins[] = {13, 12, 14, 27};
-  const int numServos = 4;
+  const int servoPins[] = {13};
+  const int numServos = 1;
   for (unsigned int i = 0; i < numServos; i++)
   {
       char axisName[10];
@@ -150,15 +162,13 @@ void App::setup()
       axis = new Axis(axisName);
       if (0 != axis)
       {
-          if ((i == 1) || (i == 2))
-          {
-              axis->setReversePosition(true);
-          }
           axis->attachServoHal(new MyServoHal(servoPins[i]));
-          axis->attachTargetReachedNotifier(new TargetReachedNotifier(axis, static_cast<CmdSequence*>(0)));
+          axis->attachTargetReachedNotifier(new TargetReachedNotifier(axis, cmdSequence));
           new DbgCmd_SetAngle(axis);
       }
   }  
+
+  new CmdGoToAngle(cmdSequence, -1, axis, srvTglInd, -90, 90, 250);
 }
 
 void App::loop()
