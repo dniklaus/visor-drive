@@ -123,27 +123,8 @@ void App::setup()
   #endif
 
   #if defined(ESP8266) || defined(ESP32)
-    WiFi.persistent(true);
-    WiFi.mode(WIFI_STA);
-
-    //-----------------------------------------------------------------------------
-    // WiFi Commands
-    //-----------------------------------------------------------------------------
-    DbgCli_Topic* wifiTopic = new DbgCli_Topic(DbgCli_Node::RootNode(), "wifi", "WiFi debug commands");
-    new DbgCli_Cmd_WifiMac(wifiTopic);
-    new DbgCli_Cmd_WifiNets(wifiTopic);
-    new DbgCli_Cmd_WifiStat(wifiTopic);
-    new DbgCli_Cmd_WifiDis(wifiTopic);
-    new DbgCli_Cmd_WifiCon(wifiTopic);
-
-    //-----------------------------------------------------------------------------
-    // MQTT Client
-    //-----------------------------------------------------------------------------
-    ECMqttClient.begin(MQTT_SERVER, ECMqttClientClass::defaultMqttPort, wifiClient, WiFi.macAddress().c_str());
-    new TestLedMqttSubscriber(m_led);
-    new DefaultMqttSubscriber("test/startup/#");
-    new MqttTopicPublisher("test/startup", WiFi.macAddress().c_str(), MqttTopicPublisher::DO_AUTO_PUBLISH);
-    // new LedTestBlinkPublisher();  // TODO: fix BUG, when this object gets created
+    WiFi.disconnect(true);
+    WiFi.mode(WIFI_OFF);
   #endif
 
   CmdSequence* cmdSequence = new CmdSequence();
