@@ -1,5 +1,5 @@
-# lolin-d32-servo
-LOLIN D32 mit 3.7V LiPo-Akku steuert vier RC-Servos
+# visor-drive
+LOLIN D32 mit 3.7V LiPo-Akku steuert ein RC-Servos
 
 Based on Skeleton Embedded Application ([wiring-skeleton](https://github.com/dniklaus/wiring-skeleton-wifi)) , powered by [PlatformIO](http://platformio.org "Cross-platform build system").
 
