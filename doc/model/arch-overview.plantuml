@@ -1,0 +1,36 @@
+@startuml
+top to bottom direction
+
+class "App (Zentrale Steuerung)" as App
+class ProductDebug
+class IndicatorFactory
+class Battery
+class Axis
+class MQTTClient
+class "Serielle CLI" as CLI
+class Timer
+class CLIKommandos
+class LedIndicator
+class ServoPwrEnIndicator
+class Spannung
+class Servo
+class TargetReachedNotifier
+class MQTTBroker
+
+App --> ProductDebug : initialisiert
+App --> IndicatorFactory : initialisiert
+App --> Battery : initialisiert
+App --> Axis : initialisiert
+App --> MQTTClient : initialisiert
+App --> CLI : verarbeitet
+App --> Timer : verarbeitet
+ProductDebug --> CLIKommandos : stellt bereit
+IndicatorFactory --> LedIndicator : erstellt
+IndicatorFactory --> ServoPwrEnIndicator : erstellt
+Battery --> Spannung : überwacht
+Axis --> Servo : steuert
+Axis --> TargetReachedNotifier : meldet
+MQTTClient --> MQTTBroker : kommuniziert
+CLI --> App : steuert
+Timer --> App : steuert
+@enduml

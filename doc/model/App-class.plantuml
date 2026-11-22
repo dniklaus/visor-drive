@@ -1,0 +1,62 @@
+@startuml
+
+package "adapter" #e3f2fd {
+  class ArduinoDigitalInPinSupervisor
+  class ButtonEdgeDetector
+  class MyBatteryAdapter
+  class MyBuiltinLedIndicatorAdapter
+  class MyButtonAdapter
+  class MyServoPwrEnIndicatorAdapter
+  class ServoButtonAdapter
+}
+
+package "prod-app" #fff9c4 {
+  class App
+  class LedTestBlinkPublisher
+  class ProductWiFiCmds
+  class TestLedMqttSubscriber
+}
+
+package "prod-axis" #c8e6c9 {
+  class CmdGoToAngle
+  class DbgCmd_InitAxes
+  class DbgCmd_SetAngle
+  class MyServoHal
+  class TargetReachedNotifier
+}
+
+package "prod-dbg" #ffcdd2 {
+  class ProductDebug
+}
+
+App --> LedTestBlinkPublisher
+App --> ProductWiFiCmds
+App --> TestLedMqttSubscriber
+App -[norank]-> CmdGoToAngle
+App -[norank]-> DbgCmd_SetAngle
+App -[norank]-> TargetReachedNotifier
+App -[norank]-> ProductDebug
+App -[norank]-> MyBatteryAdapter
+App -[norank]-> MyBuiltinLedIndicatorAdapter
+App -[norank]-> MyButtonAdapter
+App -[norank]-> MyServoPwrEnIndicatorAdapter
+App -[norank]-> ServoButtonAdapter
+App -[norank]-> MyServoHal
+App -right-> ArduinoDigitalInPinSupervisor
+App -[norank]-> ButtonEdgeDetector
+App -[norank]-> DbgCmd_InitAxes
+
+ArduinoDigitalInPinSupervisor -[hidden]down-> ButtonEdgeDetector
+ButtonEdgeDetector -[hidden]down-> MyBatteryAdapter
+MyBatteryAdapter -[hidden]down-> MyBuiltinLedIndicatorAdapter
+MyBuiltinLedIndicatorAdapter -[hidden]down-> MyButtonAdapter
+MyButtonAdapter -[hidden]down-> MyServoPwrEnIndicatorAdapter
+MyServoPwrEnIndicatorAdapter -[hidden]down-> ServoButtonAdapter
+CmdGoToAngle -[hidden]down-> DbgCmd_InitAxes
+DbgCmd_InitAxes -[hidden]down-> DbgCmd_SetAngle
+DbgCmd_SetAngle -[hidden]down-> MyServoHal
+MyServoHal -[hidden]down-> TargetReachedNotifier
+ServoButtonAdapter -[hidden]down-> CmdGoToAngle
+TargetReachedNotifier -[hidden]down-> ProductDebug
+
+@enduml
